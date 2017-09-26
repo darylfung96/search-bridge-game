@@ -21,7 +21,7 @@ public class BreadthSearchAgent implements SearchInterface{
     public void getTotalActions() {
         for (Person person : people) {
            if (person.getLocation().equals(torchLocation)) {
-               
+
            }
         }
     }
