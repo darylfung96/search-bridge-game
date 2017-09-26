@@ -4,13 +4,17 @@ public class Person {
     private String location; // if people has crossed the bridge, it will be true
 
     public Person(int bSpeed) {
-        rightSide = false;
+        speed = bSpeed;
         location = "left";
     }
 
     /* Setters */
-    public void moveLeft() { location = "left"; }
-    public void moveRight() { location = "right"; }
+    public void move() {
+        if (location.equals("right"))
+            location = "left";
+        else
+            location = "right";
+    }
 
     /* Getters */
     public int getSpeed() { return speed; }
