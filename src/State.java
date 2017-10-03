@@ -65,6 +65,10 @@ public class State {
 
         }
 
+
+        // TODO: return the appropriate states
+        return null;
+
     }
 
     public LinkedList<Integer> getLeftSide() { return leftSide; }
