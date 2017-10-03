@@ -40,7 +40,31 @@ public class State {
         which means that the torch location is the same location as them
     * */
     public LinkedList<State> getNextAvailableStates() {
-        return null;
+        LinkedList<Integer> currentSide;
+        LinkedList<Integer> otherSide;
+        if(isLeft) {
+            currentSide = new LinkedList<>(leftSide);
+            otherSide = new LinkedList<>(rightSide);
+        } else {
+            currentSide = new LinkedList<>(rightSide);
+            otherSide = new LinkedList<>(leftSide);
+        }
+
+        for (int index=0; index< currentSide.size(); index++) {
+            LinkedList<Integer> newCurrentSide = new LinkedList<>(currentSide);
+            LinkedList<Integer> newOtherSide = new LinkedList<>(otherSide);
+            int firstPeopleMoved = newCurrentSide.remove(index);
+            newOtherSide.add(firstPeopleMoved);
+            State state = (isLeft) ? new State(newCurrentSide, newOtherSide, !isLeft,timeTaken+firstPeopleMoved) :
+                    new State(newOtherSide, newCurrentSide, !isLeft, timeTaken+firstPeopleMoved);
+
+            //TODO add second people to the next side of the bridge
+            for (int second=0; second < newCurrentSide.size(); second++) {
+
+            }
+
+        }
+
     }
 
     public LinkedList<Integer> getLeftSide() { return leftSide; }

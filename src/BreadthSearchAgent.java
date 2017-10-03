@@ -1,9 +1,6 @@
 import sun.awt.image.ImageWatched;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 
 /*
@@ -16,14 +13,14 @@ import java.util.Queue;
 * */
 public class BreadthSearchAgent implements SearchAgent{
     /* CONSTANT VARIABLES */
-    public final static boolean INITIAL_TORCH_LEFT = true;
+    public final static boolean IS_LEFT = true; // torch location starting at left side
     private Deque<State> states;
     private int stateSearched;
     int maxTime; // maximum Time allowed
 
     public BreadthSearchAgent(LinkedList<Integer> people, int maxTime) {
         states = new ArrayDeque<State>();
-        states.add(new State(people, null, INITIAL_TORCH_LEFT, 0));
+        states.add(new State(people, null, IS_LEFT, 0));
         stateSearched = 0;
         this.maxTime = maxTime;
     }
