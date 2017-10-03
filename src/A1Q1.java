@@ -11,15 +11,14 @@ import java.util.LinkedList;
 public class A1Q1 {
 
     public static void main(String[] args) {
-        LinkedList<Person> people = new LinkedList<>();
-        // TODO: add acceptance time
+        LinkedList<Integer> people = new LinkedList<>();
         for (String arg : args) {
-            Person newPerson = new Person(Integer.parseInt(arg));
+            Integer newPerson = Integer.parseInt(arg);
             people.add(newPerson);
         }
 
-        BreadthSearchAgent breadthSearchAgent = new BreadthSearchAgent(people);
-
+        SearchAgent agent = new BreadthSearchAgent(people, 28);
+        agent.run();
     }
 
 

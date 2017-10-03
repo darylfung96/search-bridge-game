@@ -1,3 +1,5 @@
+import sun.awt.image.ImageWatched;
+
 import java.util.LinkedList;
 
 /*
@@ -18,17 +20,18 @@ import java.util.LinkedList;
 * */
 public class State {
 
-    private LinkedList<Person> leftSide;
-    private LinkedList<Person> rightSide;
-    private String torchLocation;
+    private LinkedList<Integer> leftSide;
+    private LinkedList<Integer> rightSide;
+    private boolean isLeft; // this refers to the torch, if it is left this is true
     private int timeTaken;
 
-    public State(LinkedList<Person> leftPeople, LinkedList<Person> rightPeople,
-                 String torchLocation, int timeTaken) {
+    public State(LinkedList<Integer> leftPeople, LinkedList<Integer> rightPeople,
+                 boolean isLeft, int timeTaken) {
         leftSide = leftPeople;
         rightSide = rightPeople;
-        this.torchLocation = torchLocation;
+        this.isLeft = isLeft;
         this.timeTaken = timeTaken;
+
     }
 
     /*
@@ -36,21 +39,22 @@ public class State {
         getNextAvailableStates return all the people that are able to move
         which means that the torch location is the same location as them
     * */
-    public LinkedList<Person> getNextAvailableStates() {
-        LinkedList<Person> availablePeople = (torchLocation.equals("left")) ? leftSide : rightSide;
-
-        for (Person person : availablePeople) {
-            
-        }
-
+    public LinkedList<State> getNextAvailableStates() {
+        return null;
     }
 
-
-    public boolean isGoal() {
-        return leftSide == null
-    }
-    public String getTorchLocation() { return torchLocation; }
+    public LinkedList<Integer> getLeftSide() { return leftSide; }
+    public LinkedList<Integer> getRightSide() { return rightSide; }
+    public boolean isGoal() { return (leftSide == null || leftSide.size() == 0); }
+    public boolean isLeft() { return isLeft; }
     public int getTimeTaken() { return timeTaken; }
 
+    public void printInfo() {
+        System.out.println("left side:");
+        for (int person : leftSide) System.out.print(Integer.toString(person) + " ");
+        System.out.println("\nright side:");
+        for(int person : rightSide) System.out.print(Integer.toString(person) + " ");
+        System.out.println("\ntotal crossing time: " + Integer.toString(timeTaken));
+    }
 
 }
