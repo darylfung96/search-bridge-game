@@ -12,12 +12,13 @@ public class A1Q1 {
 
     public static void main(String[] args) {
         LinkedList<Integer> people = new LinkedList<>();
-        for (String arg : args) {
-            Integer newPerson = Integer.parseInt(arg);
+        int maxTime = Integer.parseInt(args[0]);
+        for (int index=1; index<args.length; index++) {
+            Integer newPerson = Integer.parseInt(args[index]);
             people.add(newPerson);
         }
 
-        SearchAgent agent = new BreadthSearchAgent(people, 28);
+        SearchAgent agent = new BreadthSearchAgent(people, maxTime);
         agent.run();
     }
 

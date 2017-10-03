@@ -31,9 +31,11 @@ public class BreadthSearchAgent implements SearchAgent{
 
     @Override
     public void run() {
-        for (int index=0; index < 1000000; index++) {
-            getNextStates();
+        while(!states.isEmpty()) {
+            if(getNextStates()) break;
         }
+        System.out.println("Finished with Breadth-first Search.");
+
     }
 
     /*
@@ -72,12 +74,11 @@ public class BreadthSearchAgent implements SearchAgent{
             states.addLast(newState);
             newState.printInfo();
             System.out.println("Number state searched: " + Integer.toString(++stateSearched) + "\n");
-            if(newState.isGoal())
-                return true;
+            if(isStateGoal(newState)) return true;
 
 
             // add two person to the other side of the bridge
-            for (int second=index+1; second < currentSide.size()-1; second++) {
+            for (int second=0; second < newCurrentSide.size(); second++) {
                 LinkedList<Integer> newSecondOtherSide = new LinkedList<>(newOtherSide);
                 LinkedList<Integer> newSecondCurrentSide = new LinkedList<>(newCurrentSide);
                 int secondPeopleMoved = newSecondCurrentSide.remove(second);
@@ -91,30 +92,25 @@ public class BreadthSearchAgent implements SearchAgent{
                 states.addLast(newState);
                 newState.printInfo();
                 System.out.println("Number state searched: " + Integer.toString(++stateSearched) +"\n");
-                if(newState.isGoal())
-                    return true;
+                if(isStateGoal(newState)) return true;
             }
         }
         return false;
 
     }
 
-    /*
-        processState
 
-        Purpose: This function process a state and generates all the available
-        next states and add them to the queue.
-    * */
-    private void processState(State state) {
+    private boolean isStateGoal(State state) {
+        if(state.isGoal()){
+            if(state.getTimeTaken() > maxTime) {
+                System.out.println("Search failed. More than minimum accepted time.");
+            } else {
+                System.out.println("Search succeeded.");
+            }
+            return true;
+        }
 
-
+        // not goal
+        return false;
     }
-
-    /*
-
-    * */
-    private void addToStates() {
-
-    }
-
 }
