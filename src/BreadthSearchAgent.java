@@ -13,10 +13,6 @@ import java.util.Queue;
 *
 *   args:
 *       people: The total number of people in the game.
-*       states: All the next states available in the queue.
-*       torchLocation: The current torch position.
-*           - If torch position is on the left side, only players on the left side
-*             is able to take an action to move to the other side of the bridge.
 * */
 public class BreadthSearchAgent implements SearchInterface{
     /* CONSTANT VARIABLES */
@@ -27,7 +23,7 @@ public class BreadthSearchAgent implements SearchInterface{
 
     public BreadthSearchAgent(LinkedList<Person> people) {
         states = new ArrayDeque<State>();
-        states.add(new State(INITIAL_TORCH_LOCATION, people));
+        states.add(new State(people, null, INITIAL_TORCH_LOCATION, 0));
     }
 
 
@@ -80,19 +76,6 @@ public class BreadthSearchAgent implements SearchInterface{
 
     * */
     private void addToStates() {
-
-    }
-
-
-    public static void main(String[] args) {
-        Deque<Integer> testQueue = new ArrayDeque<Integer>();
-        testQueue.add(1);
-        testQueue.add(2);
-        testQueue.add(3);
-        testQueue.removeLast();
-        for (Integer item : testQueue) {
-            System.out.println(item);
-        }
 
     }
 

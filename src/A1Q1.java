@@ -12,7 +12,7 @@ public class A1Q1 {
 
     public static void main(String[] args) {
         LinkedList<Person> people = new LinkedList<>();
-
+        // TODO: add acceptance time
         for (String arg : args) {
             Person newPerson = new Person(Integer.parseInt(arg));
             people.add(newPerson);
