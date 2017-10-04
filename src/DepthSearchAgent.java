@@ -12,7 +12,7 @@ public class DepthSearchAgent implements SearchAgent{
         states = new Stack<State>();
         visitedStates = new LinkedList<>();
 
-        states.add(new State(people, null, IS_LEFT, 0));
+        states.add(new State(people, null, IS_LEFT, 0, 0));
 
         statesSearched = 0;
         this.maxTime = maxTime;
@@ -23,31 +23,33 @@ public class DepthSearchAgent implements SearchAgent{
     public void run() {
         State state = states.pop();
         visitedStates.add(state);
-        if(!getNextStates(state))
+        if(!getNextStates(state, state.getDepth()))
             System.out.println("Depth-first Search finished. No solution found.");
 
         System.out.println("Finished with Depth-first Search.");
     }
 
-    public boolean getNextStates(State state) {
+    public boolean getNextStates(State state, int depth) {
         for (State nextState: state.getNextAvailableStates()) {
-            if (isVisited(nextState)) continue;
+            if (isVisited(nextState)) {continue;}
 
-            visitedStates.add(nextState);
             nextState.printInfo();
             statesSearched++;
             System.out.println("Number states searched: " + Integer.toString(statesSearched));
 
             // this will return goal if found, or else expand the next state
             if (nextState.isGoal()) {
-                if (nextState.getTimeTaken() > maxTime)
+                if (nextState.getTimeTaken() > maxTime) {
                     System.out.println("The search failed. " +
                             "Minimum accepted time exceeded. Time was: " +
                             Integer.toString(nextState.getTimeTaken()) + ".");
+                    return false;
+                }
                 return true;
             }
 
-            if(getNextStates(nextState)) return true;
+            visitedStates.add(nextState);
+            if(getNextStates(nextState, nextState.getDepth())) return true;
         }
         return false;
     }

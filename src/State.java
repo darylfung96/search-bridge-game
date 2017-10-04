@@ -24,14 +24,15 @@ public class State {
     private LinkedList<Integer> rightSide;
     private boolean isLeft; // this refers to the torch, if it is left this is true
     private int timeTaken;
+    private int depth;
 
     public State(LinkedList<Integer> leftPeople, LinkedList<Integer> rightPeople,
-                 boolean isLeft, int timeTaken) {
+                 boolean isLeft, int timeTaken, int depth) {
         leftSide = leftPeople;
         rightSide = rightPeople;
         this.isLeft = isLeft;
         this.timeTaken = timeTaken;
-
+        this.depth = depth;
     }
 
     /*
@@ -63,8 +64,8 @@ public class State {
             LinkedList<Integer> newOtherSide = new LinkedList<>(otherSide);
             int firstPeopleMoved = newCurrentSide.remove(index);
             newOtherSide.add(firstPeopleMoved);
-            State state = (isLeft) ? new State(newCurrentSide, newOtherSide, !isLeft,timeTaken+firstPeopleMoved) :
-                    new State(newOtherSide, newCurrentSide, !isLeft, timeTaken+firstPeopleMoved);
+            State state = (isLeft) ? new State(newCurrentSide, newOtherSide, !isLeft,timeTaken+firstPeopleMoved, ++depth) :
+                    new State(newOtherSide, newCurrentSide, !isLeft, timeTaken+firstPeopleMoved, ++depth);
             newStates.add(state);
             // add two people to the other side of the bridge
             for (int second=0; second < newCurrentSide.size(); second++) {
@@ -73,8 +74,8 @@ public class State {
                 int secondPeopleMoved = newSecondCurrentSide.remove(second);
                 newSecondOtherSide.add(secondPeopleMoved);
                 int slowerSpeed = (firstPeopleMoved > secondPeopleMoved) ? firstPeopleMoved : secondPeopleMoved;
-                state = (isLeft) ? new State(newSecondCurrentSide, newSecondOtherSide, !isLeft, timeTaken+slowerSpeed) :
-                        new State(newSecondOtherSide, newSecondCurrentSide, !isLeft, timeTaken+slowerSpeed);
+                state = (isLeft) ? new State(newSecondCurrentSide, newSecondOtherSide, !isLeft, timeTaken+slowerSpeed, ++depth) :
+                        new State(newSecondOtherSide, newSecondCurrentSide, !isLeft, timeTaken+slowerSpeed, ++depth);
                 newStates.add(state);
             }
 
@@ -91,6 +92,7 @@ public class State {
     public boolean isGoal() { return (leftSide == null || leftSide.size() == 0); }
     public boolean isLeft() { return isLeft; }
     public int getTimeTaken() { return timeTaken; }
+    public int getDepth() { return depth; }
 
     /* equal function */
     /*
@@ -131,9 +133,10 @@ public class State {
         if(currentSide == null) return 0;
 
         int total = 0;
-        for (int person : currentSide)
-            total += person;
-        total *= currentSide.size();
+        final int EPSILON = 2;
+        for (int index=0; index < currentSide.size(); index++) {
+            total += currentSide.get(index) * Math.pow(EPSILON, index);
+        }
         return total;
     }
 
@@ -144,6 +147,7 @@ public class State {
     public void printInfo() {
         printLeft();
         printRight();
+        System.out.println("current depth: " + Integer.toString(depth));
         System.out.println("total crossing time: " + Integer.toString(timeTaken));
     }
     /*
