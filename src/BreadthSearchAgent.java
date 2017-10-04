@@ -10,6 +10,13 @@ import java.util.*;
 *
 *   args:
 *       people: The total number of people in the game.
+*       maxTime: The maximum accepted time for the people to cross to the other side
+*                of the bridge. If this time is exceeded, the search is considered as failed.
+*
+*   Purpose:
+*       Use a breadth-first search algorithm to search for the states and put them into
+*       a queue. Breadth-first Search is a more memory consuming algorithm but it can
+*       find the goal state in a better solution.
 * */
 public class BreadthSearchAgent implements SearchAgent{
     /* CONSTANT VARIABLES */
@@ -28,9 +35,7 @@ public class BreadthSearchAgent implements SearchAgent{
 
     @Override
     public void run() {
-        while(!states.isEmpty()) {
-            if(getNextStates()) break;
-        }
+        getNextStates();
         System.out.println("Finished with Breadth-first Search.");
 
     }
@@ -45,56 +50,65 @@ public class BreadthSearchAgent implements SearchAgent{
     *
     * */
     public boolean getNextStates() {
-        State currentState = states.removeFirst();
-
-        LinkedList<Integer> currentSide;
-        LinkedList<Integer> otherSide;
-        if (currentState.isLeft()) {
-            currentSide = currentState.getLeftSide();
-            otherSide = currentState.getRightSide();
-        } else {
-            currentSide = currentState.getRightSide();
-            otherSide = currentState.getLeftSide();
-        }
-
-        // add one person to the other side of the bridge
-        for(int index=0; index < currentSide.size(); index++) {
-            LinkedList<Integer> newCurrentSide = new LinkedList<>(currentSide);
-            LinkedList<Integer> newOtherSide = (otherSide != null) ? new LinkedList<>(otherSide) : new LinkedList<>();
-            // remove the people from current side and move them to the other side
-            // peopleMoved is the speed of the person
-            int peopleMoved = newCurrentSide.remove(index);
-            newOtherSide.add(peopleMoved);
-
-            State newState = (currentState.isLeft()) ? new State(newCurrentSide, newOtherSide, !currentState.isLeft(), currentState.getTimeTaken()+peopleMoved) :
-                    new State(newOtherSide, newCurrentSide, !currentState.isLeft(), currentState.getTimeTaken()+peopleMoved);
-            states.addLast(newState);
-            newState.printInfo();
-            System.out.println("Number state searched: " + Integer.toString(++stateSearched) + "\n");
-            if(isStateGoal(newState)) return true;
-
-
-            // add two person to the other side of the bridge
-            for (int second=0; second < newCurrentSide.size(); second++) {
-                LinkedList<Integer> newSecondOtherSide = new LinkedList<>(newOtherSide);
-                LinkedList<Integer> newSecondCurrentSide = new LinkedList<>(newCurrentSide);
-                int secondPeopleMoved = newSecondCurrentSide.remove(second);
-                newSecondOtherSide.add(secondPeopleMoved);
-
-                // if both people crossed, they move at the slower speed
-                int slowerSpeed = (peopleMoved > secondPeopleMoved) ? peopleMoved : secondPeopleMoved;
-
-                newState = (currentState.isLeft()) ? new State(newSecondCurrentSide, newSecondOtherSide, !currentState.isLeft(), currentState.getTimeTaken()+slowerSpeed) :
-                        new State(newSecondOtherSide, newSecondCurrentSide, !currentState.isLeft(), currentState.getTimeTaken()+slowerSpeed);
-                states.addLast(newState);
-                newState.printInfo();
-                System.out.println("Number state searched: " + Integer.toString(++stateSearched) +"\n");
-                if(isStateGoal(newState)) return true;
-            }
+        while (!states.isEmpty()) {
+            State currentState = states.removeFirst();
+            currentState.printInfo();
+            stateSearched++;
+            System.out.println("Number state searched: " + Integer.toString(++stateSearched) +"\n");
+            states.addAll(currentState.getNextAvailableStates());
+            if (isStateGoal(currentState)) return true;
         }
         return false;
-
     }
+
+//        LinkedList<Integer> currentSide;
+//        LinkedList<Integer> otherSide;
+//        if (currentState.isLeft()) {
+//            currentSide = currentState.getLeftSide();
+//            otherSide = currentState.getRightSide();
+//        } else {
+//            currentSide = currentState.getRightSide();
+//            otherSide = currentState.getLeftSide();
+//        }
+//
+//        // add one person to the other side of the bridge
+//        for(int index=0; index < currentSide.size(); index++) {
+//            LinkedList<Integer> newCurrentSide = new LinkedList<>(currentSide);
+//            LinkedList<Integer> newOtherSide = (otherSide != null) ? new LinkedList<>(otherSide) : new LinkedList<>();
+//            // remove the people from current side and move them to the other side
+//            // peopleMoved is the speed of the person
+//            int peopleMoved = newCurrentSide.remove(index);
+//            newOtherSide.add(peopleMoved);
+//
+//            State newState = (currentState.isLeft()) ? new State(newCurrentSide, newOtherSide, !currentState.isLeft(), currentState.getTimeTaken()+peopleMoved) :
+//                    new State(newOtherSide, newCurrentSide, !currentState.isLeft(), currentState.getTimeTaken()+peopleMoved);
+//            states.addLast(newState);
+//            newState.printInfo();
+//            System.out.println("Number state searched: " + Integer.toString(++stateSearched) + "\n");
+//            if(isStateGoal(newState)) return true;
+//
+//
+//            // add two person to the other side of the bridge
+//            for (int second=0; second < newCurrentSide.size(); second++) {
+//                LinkedList<Integer> newSecondOtherSide = new LinkedList<>(newOtherSide);
+//                LinkedList<Integer> newSecondCurrentSide = new LinkedList<>(newCurrentSide);
+//                int secondPeopleMoved = newSecondCurrentSide.remove(second);
+//                newSecondOtherSide.add(secondPeopleMoved);
+//
+//                // if both people crossed, they move at the slower speed
+//                int slowerSpeed = (peopleMoved > secondPeopleMoved) ? peopleMoved : secondPeopleMoved;
+//
+//                newState = (currentState.isLeft()) ? new State(newSecondCurrentSide, newSecondOtherSide, !currentState.isLeft(), currentState.getTimeTaken()+slowerSpeed) :
+//                        new State(newSecondOtherSide, newSecondCurrentSide, !currentState.isLeft(), currentState.getTimeTaken()+slowerSpeed);
+//                states.addLast(newState);
+//                newState.printInfo();
+//                System.out.println("Number state searched: " + Integer.toString(++stateSearched) +"\n");
+//                if(isStateGoal(newState)) return true;
+//            }
+//        }
+//        return false;
+
+    //}
 
 
     private boolean isStateGoal(State state) {

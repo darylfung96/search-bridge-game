@@ -20,18 +20,28 @@ public class DepthSearchAgent implements SearchAgent{
 
     @Override
     public void run() {
+        State state = states.pop();
+        visitedStates.add(state);
+        getNextStates(state);
 
+        System.out.println("Finished with Depth-first Search");
     }
 
-    public void getNextStates() {
-        while(states.isEmpty()) {
-            State currentState = states.pop();
-            if(visitedStates.contains(currentState)) continue;
+    public void getNextStates(State state) {
+        for (State nextState: state.getNextAvailableStates()) {
+            if (visitedStates.contains(nextState)) continue;
 
-            // if we haven't visited this state, we want to get all the next states
-
-
+            visitedStates.add(nextState);
+            nextState.printInfo();
+            statesSearched++;
+            System.out.println("Number states searched: " + Integer.toString(statesSearched));
+            if(nextState.isGoal()) {
+                break;
+            }
+            getNextStates(nextState);
         }
+
+        System.out.println("Depth-first Search finished. No solution found.");
 
     }
 

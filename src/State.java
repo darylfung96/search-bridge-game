@@ -38,18 +38,26 @@ public class State {
     *
         getNextAvailableStates return all the people that are able to move
         which means that the torch location is the same location as them
+
+        example: If the torch location is on the left side, whoever is on the left side
+                 is available to move.
+
+        return: newStates
+                The list of all the next available states.
     * */
     public LinkedList<State> getNextAvailableStates() {
-        LinkedList<Integer> currentSide;
-        LinkedList<Integer> otherSide;
+        LinkedList<Integer> currentSide = new LinkedList<>();
+        LinkedList<Integer> otherSide = new LinkedList<>();
+        LinkedList<State> newStates = new LinkedList<>();
         if(isLeft) {
-            currentSide = new LinkedList<>(leftSide);
-            otherSide = new LinkedList<>(rightSide);
+            if(leftSide != null) currentSide = new LinkedList<>(leftSide);
+            if(rightSide != null) otherSide = new LinkedList<>(rightSide);
         } else {
-            currentSide = new LinkedList<>(rightSide);
-            otherSide = new LinkedList<>(leftSide);
+            if (rightSide != null) currentSide = new LinkedList<>(rightSide);
+            if (leftSide != null) otherSide = new LinkedList<>(leftSide);
         }
 
+        // add one people to the other side of the birdge
         for (int index=0; index< currentSide.size(); index++) {
             LinkedList<Integer> newCurrentSide = new LinkedList<>(currentSide);
             LinkedList<Integer> newOtherSide = new LinkedList<>(otherSide);
@@ -57,32 +65,86 @@ public class State {
             newOtherSide.add(firstPeopleMoved);
             State state = (isLeft) ? new State(newCurrentSide, newOtherSide, !isLeft,timeTaken+firstPeopleMoved) :
                     new State(newOtherSide, newCurrentSide, !isLeft, timeTaken+firstPeopleMoved);
-
-            //TODO add second people to the next side of the bridge
+            newStates.add(state);
+            // add two people to the other side of the bridge
             for (int second=0; second < newCurrentSide.size(); second++) {
-
+                LinkedList<Integer> newSecondCurrentSide = new LinkedList<>(newCurrentSide);
+                LinkedList<Integer> newSecondOtherSide = new LinkedList<>(newOtherSide);
+                int secondPeopleMoved = newSecondCurrentSide.remove(second);
+                newSecondOtherSide.add(secondPeopleMoved);
+                int slowerSpeed = (firstPeopleMoved > secondPeopleMoved) ? firstPeopleMoved : secondPeopleMoved;
+                state = (isLeft) ? new State(newSecondCurrentSide, newSecondOtherSide, !isLeft, timeTaken+slowerSpeed) :
+                        new State(newSecondOtherSide, newSecondCurrentSide, !isLeft, timeTaken+slowerSpeed);
+                newStates.add(state);
             }
 
         }
 
 
-        // TODO: return the appropriate states
-        return null;
+        return newStates;
 
     }
 
+    // getters
     public LinkedList<Integer> getLeftSide() { return leftSide; }
     public LinkedList<Integer> getRightSide() { return rightSide; }
     public boolean isGoal() { return (leftSide == null || leftSide.size() == 0); }
     public boolean isLeft() { return isLeft; }
     public int getTimeTaken() { return timeTaken; }
 
-    public void printInfo() {
-        System.out.println("left side:");
-        for (int person : leftSide) System.out.print(Integer.toString(person) + " ");
-        System.out.println("\nright side:");
-        for(int person : rightSide) System.out.print(Integer.toString(person) + " ");
-        System.out.println("\ntotal crossing time: " + Integer.toString(timeTaken));
+    /* equal function */
+    /*
+    *   Equal State comparison function
+    *
+    *   We will define our own equal function here since for example:
+    *   if
+    *   left side: 1 2 3 4
+    *   compare to
+    *   left side: 2 1 3 4
+    *
+    *   They are both equal states but the built-in equal function is
+    *   not able to find out that they are both equal.
+    *
+    *   Here the algorithm works as:
+    *   We get the number of people on the side of the bridge + the speed of everyone on that side
+    *
+    *   example:
+    *   1 2 3 4 => 4 + (1 + 2 + 3 + 4) = 14
+    *
+    * */
+    //TODO: finish up this equal comparison
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null || obj.getClass() != getClass()) return false;
+
+        State state = (State)obj;
+
+        return false;
     }
+
+    // print information
+    public void printInfo() {
+        printLeft();
+        printRight();
+        System.out.println("total crossing time: " + Integer.toString(timeTaken));
+    }
+    /*
+    Private print helper functions
+    * */
+    private void printLeft() {
+        System.out.println("left side:");
+        if(leftSide != null) {
+            for (int person : leftSide) System.out.print(Integer.toString(person) + " ");
+            System.out.println();
+        }
+    }
+    private void printRight() {
+        System.out.println("right side:");
+        if(rightSide != null) {
+            for (int person : rightSide) System.out.print(Integer.toString(person) + " ");
+            System.out.println();
+        }
+    }
+
 
 }

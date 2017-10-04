@@ -20,6 +20,9 @@ public class A1Q1 {
 
         SearchAgent agent = new BreadthSearchAgent(people, maxTime);
         agent.run();
+
+        agent = new DepthSearchAgent(people, maxTime);
+        agent.run();
     }
 
 
