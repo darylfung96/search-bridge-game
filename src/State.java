@@ -106,21 +106,39 @@ public class State {
     *   not able to find out that they are both equal.
     *
     *   Here the algorithm works as:
-    *   We get the number of people on the side of the bridge + the speed of everyone on that side
+    *   We get the number of people on the side of the bridge * the speed of everyone on that side
     *
     *   example:
-    *   1 2 3 4 => 4 + (1 + 2 + 3 + 4) = 14
+    *   1 2 3 4 => 2 * (1 + 2 + 3 + 4) = 20
+    *   getSideInfo(String side) is a helper function that gets this information.
     *
     * */
-    //TODO: finish up this equal comparison
     @Override
     public boolean equals(Object obj) {
         if(obj == null || obj.getClass() != getClass()) return false;
 
         State state = (State)obj;
 
+        // if both side equals then we say this state is equivalent to the other state
+        if(state.getSideInfo("left") == getSideInfo("left"))
+            if(state.getSideInfo("right") == getSideInfo("right"))
+                return true;
+
         return false;
     }
+    private int getSideInfo(String side) {
+        LinkedList<Integer> currentSide = (side.equals("left")) ? leftSide : rightSide;
+        if(currentSide == null) return 0;
+
+        int total = 0;
+        for (int person : currentSide)
+            total += person;
+        total *= currentSide.size();
+        return total;
+    }
+
+
+
 
     // print information
     public void printInfo() {

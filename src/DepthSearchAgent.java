@@ -4,15 +4,16 @@ public class DepthSearchAgent implements SearchAgent{
 
     private final static boolean IS_LEFT = true; // torch location at left side starting
     private Stack<State> states;
-    private Set<State> visitedStates;
+    private LinkedList<State> visitedStates;
     private int statesSearched;
     private int maxTime;
 
     public DepthSearchAgent(LinkedList<Integer> people, int maxTime) {
         states = new Stack<State>();
-        visitedStates = new HashSet<State>();
+        visitedStates = new LinkedList<>();
 
         states.add(new State(people, null, IS_LEFT, 0));
+
         statesSearched = 0;
         this.maxTime = maxTime;
     }
@@ -22,27 +23,44 @@ public class DepthSearchAgent implements SearchAgent{
     public void run() {
         State state = states.pop();
         visitedStates.add(state);
-        getNextStates(state);
+        if(!getNextStates(state))
+            System.out.println("Depth-first Search finished. No solution found.");
 
-        System.out.println("Finished with Depth-first Search");
+        System.out.println("Finished with Depth-first Search.");
     }
 
-    public void getNextStates(State state) {
+    public boolean getNextStates(State state) {
         for (State nextState: state.getNextAvailableStates()) {
-            if (visitedStates.contains(nextState)) continue;
+            if (isVisited(nextState)) continue;
 
             visitedStates.add(nextState);
             nextState.printInfo();
             statesSearched++;
             System.out.println("Number states searched: " + Integer.toString(statesSearched));
-            if(nextState.isGoal()) {
-                break;
+
+            // this will return goal if found, or else expand the next state
+            if (nextState.isGoal()) {
+                if (nextState.getTimeTaken() > maxTime)
+                    System.out.println("The search failed. " +
+                            "Minimum accepted time exceeded. Time was: " +
+                            Integer.toString(nextState.getTimeTaken()) + ".");
+                return true;
             }
-            getNextStates(nextState);
+
+            if(getNextStates(nextState)) return true;
         }
+        return false;
+    }
 
-        System.out.println("Depth-first Search finished. No solution found.");
 
+    /*
+    Check if this currentState has already been visited
+    * */
+    private boolean isVisited(State currentState) {
+        for (State state : visitedStates){
+            if(currentState.equals(state)) return true;
+        }
+        return false;
     }
 
 
