@@ -64,8 +64,8 @@ public class State {
             LinkedList<Integer> newOtherSide = new LinkedList<>(otherSide);
             int firstPeopleMoved = newCurrentSide.remove(index);
             newOtherSide.add(firstPeopleMoved);
-            State state = (isLeft) ? new State(newCurrentSide, newOtherSide, !isLeft,timeTaken+firstPeopleMoved, ++depth) :
-                    new State(newOtherSide, newCurrentSide, !isLeft, timeTaken+firstPeopleMoved, ++depth);
+            State state = (isLeft) ? new State(newCurrentSide, newOtherSide, !isLeft,timeTaken+firstPeopleMoved, depth+1) :
+                    new State(newOtherSide, newCurrentSide, !isLeft, timeTaken+firstPeopleMoved, depth+1);
             newStates.add(state);
             // add two people to the other side of the bridge
             for (int second=0; second < newCurrentSide.size(); second++) {
@@ -74,8 +74,8 @@ public class State {
                 int secondPeopleMoved = newSecondCurrentSide.remove(second);
                 newSecondOtherSide.add(secondPeopleMoved);
                 int slowerSpeed = (firstPeopleMoved > secondPeopleMoved) ? firstPeopleMoved : secondPeopleMoved;
-                state = (isLeft) ? new State(newSecondCurrentSide, newSecondOtherSide, !isLeft, timeTaken+slowerSpeed, ++depth) :
-                        new State(newSecondOtherSide, newSecondCurrentSide, !isLeft, timeTaken+slowerSpeed, ++depth);
+                state = (isLeft) ? new State(newSecondCurrentSide, newSecondOtherSide, !isLeft, timeTaken+slowerSpeed, depth+1) :
+                        new State(newSecondOtherSide, newSecondCurrentSide, !isLeft, timeTaken+slowerSpeed, depth+1);
                 newStates.add(state);
             }
 

@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.LinkedList;
 
 
@@ -20,9 +21,23 @@ public class A1Q1 {
 
         SearchAgent agent = new BreadthSearchAgent(people, maxTime);
         agent.run();
+        pressKeyContinue();
 
         agent = new DepthSearchAgent(people, maxTime);
         agent.run();
+        pressKeyContinue();
+
+        agent = new IterativeDeepAgent(people, maxTime);
+        agent.run();
+    }
+
+    private static void pressKeyContinue() {
+        System.out.println("<Click here, Press down key and Press Enter to continue>");
+        try {
+            System.in.read();
+        } catch(IOException e) {
+            System.out.println("IO Exception");
+        }
     }
 
 

@@ -2,11 +2,11 @@ import java.util.*;
 
 public class DepthSearchAgent implements SearchAgent{
 
-    private final static boolean IS_LEFT = true; // torch location at left side starting
-    private Stack<State> states;
+    final static boolean IS_LEFT = true; // torch location at left side starting
+    Stack<State> states;
     private LinkedList<State> visitedStates;
-    private int statesSearched;
-    private int maxTime;
+    int statesSearched;
+    int maxTime;
 
     public DepthSearchAgent(LinkedList<Integer> people, int maxTime) {
         states = new Stack<State>();
@@ -22,7 +22,6 @@ public class DepthSearchAgent implements SearchAgent{
     @Override
     public void run() {
         State state = states.pop();
-        visitedStates.add(state);
         if(!getNextStates(state, state.getDepth()))
             System.out.println("Depth-first Search finished. No solution found.");
 
@@ -30,6 +29,7 @@ public class DepthSearchAgent implements SearchAgent{
     }
 
     public boolean getNextStates(State state, int depth) {
+        visitedStates.add(state);
         for (State nextState: state.getNextAvailableStates()) {
             if (isVisited(nextState)) {continue;}
 
@@ -43,7 +43,7 @@ public class DepthSearchAgent implements SearchAgent{
                     System.out.println("The search failed. " +
                             "Minimum accepted time exceeded. Time was: " +
                             Integer.toString(nextState.getTimeTaken()) + ".");
-                    return false;
+                    continue;
                 }
                 return true;
             }
