@@ -65,10 +65,12 @@ public class BreadthSearchAgent implements SearchAgent{
         if(state.isGoal()){
             if(state.getTimeTaken() > maxTime) {
                 System.out.println("Search failed. More than minimum accepted time.");
+                return false;
             } else {
                 System.out.println("Search succeeded.");
+                return true;
             }
-            return true;
+
         }
 
         // not goal

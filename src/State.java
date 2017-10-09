@@ -26,6 +26,10 @@ public class State {
     private int timeTaken;
     private int depth;
 
+    // used for heuristic
+    private int highestSpeed;
+    private int reward;
+
     public State(LinkedList<Integer> leftPeople, LinkedList<Integer> rightPeople,
                  boolean isLeft, int timeTaken, int depth) {
         leftSide = leftPeople;
@@ -33,7 +37,21 @@ public class State {
         this.isLeft = isLeft;
         this.timeTaken = timeTaken;
         this.depth = depth;
+        this.highestSpeed=0;
     }
+
+    // heuristic state constructor
+    public State(LinkedList<Integer> leftPeople, LinkedList<Integer> rightPeople,
+                 boolean isLeft, int timeTaken, int depth, int highestSpeed) {
+        leftSide = leftPeople;
+        rightSide = rightPeople;
+        this.isLeft = isLeft;
+        this.timeTaken = timeTaken;
+        this.depth = depth;
+        this.highestSpeed=highestSpeed;
+    }
+
+    public void setReward(int reward) { this.reward = reward;}
 
     /*
     *
@@ -64,8 +82,9 @@ public class State {
             LinkedList<Integer> newOtherSide = new LinkedList<>(otherSide);
             int firstPeopleMoved = newCurrentSide.remove(index);
             newOtherSide.add(firstPeopleMoved);
-            State state = (isLeft) ? new State(newCurrentSide, newOtherSide, !isLeft,timeTaken+firstPeopleMoved, depth+1) :
-                    new State(newOtherSide, newCurrentSide, !isLeft, timeTaken+firstPeopleMoved, depth+1);
+            State state = (isLeft) ? new State(newCurrentSide, newOtherSide, !isLeft,timeTaken+firstPeopleMoved, depth+1, highestSpeed) :
+                    new State(newOtherSide, newCurrentSide, !isLeft, timeTaken+firstPeopleMoved, depth+1, highestSpeed);
+            state.setReward(state.calculateReward(firstPeopleMoved));
             newStates.add(state);
             // add two people to the other side of the bridge
             for (int second=0; second < newCurrentSide.size(); second++) {
@@ -74,8 +93,9 @@ public class State {
                 int secondPeopleMoved = newSecondCurrentSide.remove(second);
                 newSecondOtherSide.add(secondPeopleMoved);
                 int slowerSpeed = (firstPeopleMoved > secondPeopleMoved) ? firstPeopleMoved : secondPeopleMoved;
-                state = (isLeft) ? new State(newSecondCurrentSide, newSecondOtherSide, !isLeft, timeTaken+slowerSpeed, depth+1) :
-                        new State(newSecondOtherSide, newSecondCurrentSide, !isLeft, timeTaken+slowerSpeed, depth+1);
+                state = (isLeft) ? new State(newSecondCurrentSide, newSecondOtherSide, !isLeft, timeTaken+slowerSpeed, depth+1, highestSpeed) :
+                        new State(newSecondOtherSide, newSecondCurrentSide, !isLeft, timeTaken+slowerSpeed, depth+1, highestSpeed);
+                state.setReward(state.calculateReward(firstPeopleMoved, secondPeopleMoved));
                 newStates.add(state);
             }
 
@@ -93,6 +113,37 @@ public class State {
     public boolean isLeft() { return isLeft; }
     public int getTimeTaken() { return timeTaken; }
     public int getDepth() { return depth; }
+    public int getReward() { return reward; }
+
+
+    /*
+    *   calculateReward
+    *       Purpose:    Calculate the reward of the current state
+    *       Calculation:    For every person on the right side of the bridge, reward + 10
+    *                       The fastest person who move will have a better reward: reward = highestSpeed-currentPersonMoveSpeed
+    *
+    *       arguments:
+    *                   person: The person who moved to achieve this state
+    *
+    *       return:     reward for this state
+    *
+    *
+    * */
+    private int calculateReward(int... person) {
+        int reward = 0;
+        for (int speed :getRightSide()) reward+=10;
+
+        // if there is only one person
+        if(person.length == 1) return reward+=highestSpeed-person[0];
+
+        // Take the person with the highest time taken
+        int speed = (person[0]>person[1]) ? person[0] : person[1];
+
+        reward += highestSpeed-speed;
+        return reward;
+    }
+
+
 
     /* equal function */
     /*
@@ -128,6 +179,9 @@ public class State {
 
         return false;
     }
+
+
+
     private int getSideInfo(String side) {
         LinkedList<Integer> currentSide = (side.equals("left")) ? leftSide : rightSide;
         if(currentSide == null) return 0;
@@ -167,6 +221,7 @@ public class State {
             System.out.println();
         }
     }
+
 
 
 }
