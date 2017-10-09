@@ -53,7 +53,6 @@ public class BreadthSearchAgent implements SearchAgent{
         while (!states.isEmpty()) {
             State currentState = states.removeFirst();
             currentState.printInfo();
-            stateSearched++;
             System.out.println("Number state searched: " + Integer.toString(++stateSearched) +"\n");
             states.addAll(currentState.getNextAvailableStates());
             if (isStateGoal(currentState)) return true;
@@ -75,4 +74,6 @@ public class BreadthSearchAgent implements SearchAgent{
         // not goal
         return false;
     }
+
+
 }

@@ -58,7 +58,7 @@ public class State {
             if (leftSide != null) otherSide = new LinkedList<>(leftSide);
         }
 
-        // add one people to the other side of the birdge
+        // add one people to the other side of the bridge
         for (int index=0; index< currentSide.size(); index++) {
             LinkedList<Integer> newCurrentSide = new LinkedList<>(currentSide);
             LinkedList<Integer> newOtherSide = new LinkedList<>(otherSide);
