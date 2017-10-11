@@ -24,6 +24,7 @@ public class BreadthSearchAgent implements SearchAgent{
     private Deque<State> states;
     private int stateSearched;
     int maxTime; // maximum Time allowed
+    private State achievedGoalState;
 
     public BreadthSearchAgent(LinkedList<Integer> people, int maxTime) {
         states = new ArrayDeque<State>();
@@ -35,8 +36,16 @@ public class BreadthSearchAgent implements SearchAgent{
 
     @Override
     public void run() {
+        System.out.println("BFS:");
         getNextStates();
-        System.out.println("Finished with Breadth-first Search.");
+        if(achievedGoalState != null) {
+            for (String action : achievedGoalState.getActions()) {
+                System.out.println(action);
+            }
+            System.out.println("Solved!");
+            System.out.println("Number state searched: " + stateSearched);
+        }
+        System.out.println("Finished with Breadth-first Search.\n");
 
     }
 
@@ -52,8 +61,8 @@ public class BreadthSearchAgent implements SearchAgent{
     public boolean getNextStates() {
         while (!states.isEmpty()) {
             State currentState = states.removeFirst();
-            currentState.printInfo();
-            System.out.println("Number state searched: " + Integer.toString(++stateSearched) +"\n");
+            //currentState.printInfo();
+            stateSearched++;
             states.addAll(currentState.getNextAvailableStates());
             if (isStateGoal(currentState)) return true;
         }
@@ -64,10 +73,14 @@ public class BreadthSearchAgent implements SearchAgent{
     private boolean isStateGoal(State state) {
         if(state.isGoal()){
             if(state.getTimeTaken() > maxTime) {
-                System.out.println("Search failed. More than minimum accepted time.");
+                for ( String action : state.getActions()) {
+                    System.out.println(action);
+                }
+                System.out.println("Unsolved! More than minimum accepted time.");
+                System.out.println("Number state searched: " + stateSearched);
                 return false;
             } else {
-                System.out.println("Search succeeded.");
+                achievedGoalState = state;
                 return true;
             }
 

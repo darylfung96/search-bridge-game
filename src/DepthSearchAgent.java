@@ -1,5 +1,8 @@
 import java.util.*;
 
+/*
+* Depth Search Agent
+* */
 public class DepthSearchAgent implements SearchAgent{
 
     final static boolean IS_LEFT = true; // torch location at left side starting
@@ -7,6 +10,7 @@ public class DepthSearchAgent implements SearchAgent{
     private LinkedList<State> visitedStates;
     int statesSearched;
     int maxTime;
+    private State achievedGoalState;
 
     public DepthSearchAgent(LinkedList<Integer> people, int maxTime) {
         states = new Stack<State>();
@@ -21,9 +25,15 @@ public class DepthSearchAgent implements SearchAgent{
 
     @Override
     public void run() {
+        System.out.println("DFS:");
         State state = states.pop();
-        if(!getNextStates(state, state.getDepth()))
-            System.out.println("Depth-first Search finished. No solution found.");
+        if(getNextStates(state, state.getDepth())) {
+            for ( String action : state.getActions()) {
+                System.out.println(action);
+            }
+            System.out.println("Solved!");
+            System.out.println("Number of states searched: " + statesSearched);
+        }
 
         System.out.println("Finished with Depth-first Search.");
     }
@@ -33,18 +43,19 @@ public class DepthSearchAgent implements SearchAgent{
         for (State nextState: state.getNextAvailableStates()) {
             if (isVisited(nextState)) {continue;}
 
-            nextState.printInfo();
             statesSearched++;
-            System.out.println("Number states searched: " + Integer.toString(statesSearched));
 
             // this will return goal if found, or else expand the next state
             if (nextState.isGoal()) {
                 if (nextState.getTimeTaken() > maxTime) {
-                    System.out.println("The search failed. " +
-                            "Minimum accepted time exceeded. Time was: " +
-                            Integer.toString(nextState.getTimeTaken()) + ".");
+                    for ( String action : state.getActions()) {
+                        System.out.println(action);
+                    }
+                    System.out.println("Unsolved! More than minimum accepted time.");
+                    System.out.println("Number of states searched: " + statesSearched);
                     continue;
                 }
+                achievedGoalState = nextState;
                 return true;
             }
 

@@ -1,5 +1,9 @@
 import java.util.LinkedList;
 
+/*
+* Iterative Deepening agent
+*
+* */
 public class IterativeDeepAgent extends DepthSearchAgent {
 
     private final int maxDepth = 1000;
