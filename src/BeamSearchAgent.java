@@ -2,6 +2,9 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 
+/*
+*   BeamSearch Agent
+* */
 public class BeamSearchAgent implements SearchAgent {
 
     private State initialState;
@@ -9,6 +12,7 @@ public class BeamSearchAgent implements SearchAgent {
     private int statesSearched;
     private int maxTime;
     private int beamSize;
+    private State achievedGoalState;
     private PriorityQueue<State> beamStates;
 
     public BeamSearchAgent(LinkedList<Integer> people, int maxTime, int highestSpeed, int beamSize) {
@@ -23,9 +27,22 @@ public class BeamSearchAgent implements SearchAgent {
 
     @Override
     public void run() {
+        System.out.println("Beam Search:");
         if(getNextStates()) {
+            for (String action : achievedGoalState.getActions()) {
+                System.out.println(action);
+            }
+            System.out.println("Solved!");
+            System.out.println("Number state searched: " + statesSearched);
             System.out.println("Beam Search succeeded.");
         } else {
+            for (String action : achievedGoalState.getActions()) {
+                System.out.println(action);
+            }
+            System.out.println("Unsolved!");
+            if (achievedGoalState == null)  System.out.println("No solution found!");
+            else                            System.out.println("Minimum accepted time not achieved.");
+            System.out.println("Number state searched: " + statesSearched);
             System.out.println("Beam Search failed.");
         }
     }
@@ -40,16 +57,11 @@ public class BeamSearchAgent implements SearchAgent {
             int limit = (beamSize > beamStates.size()) ? beamStates.size() : beamSize;
             for (int index = 0; index < limit; index++) {
                 State nextState = beamStates.poll();
-                nextState.printInfo();
                 statesSearched++;
-                System.out.println("Number states searched: " + Integer.toString(statesSearched));
 
                 if (nextState.isGoal()) {
-                    if (nextState.getTimeTaken() > maxTime) {
-                        System.out.println("The search failed. " +
-                                "Minimum accepted time exceeded. Time was: " +
-                                Integer.toString(nextState.getTimeTaken()) + ".");
-                    } else {
+                    achievedGoalState = nextState;
+                    if (nextState.getTimeTaken() <= maxTime) {
                         return true;
                     }
                 }

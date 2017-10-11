@@ -28,10 +28,16 @@ public class DepthSearchAgent implements SearchAgent{
         System.out.println("DFS:");
         State state = states.pop();
         if(getNextStates(state, state.getDepth())) {
-            for ( String action : state.getActions()) {
+            for ( String action : achievedGoalState.getActions()) {
                 System.out.println(action);
             }
             System.out.println("Solved!");
+            System.out.println("Number of states searched: " + statesSearched);
+        } else {
+            for ( String action : achievedGoalState.getActions()) {
+                System.out.println(action);
+            }
+            System.out.println("Unsolved! More than minimum accepted time.");
             System.out.println("Number of states searched: " + statesSearched);
         }
 
@@ -47,15 +53,10 @@ public class DepthSearchAgent implements SearchAgent{
 
             // this will return goal if found, or else expand the next state
             if (nextState.isGoal()) {
+                achievedGoalState = nextState;
                 if (nextState.getTimeTaken() > maxTime) {
-                    for ( String action : state.getActions()) {
-                        System.out.println(action);
-                    }
-                    System.out.println("Unsolved! More than minimum accepted time.");
-                    System.out.println("Number of states searched: " + statesSearched);
                     continue;
                 }
-                achievedGoalState = nextState;
                 return true;
             }
 

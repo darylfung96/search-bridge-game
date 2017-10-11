@@ -2,8 +2,6 @@ import sun.awt.image.ImageWatched;
 
 import java.util.LinkedList;
 
-//TODO: print out the moves from the intiial state to the goal state after getting to the goal state
-
 /*
 *   State: Stores all the information of the current state everything is in.
 *   for example:    If there are 4 people in the game.
@@ -158,7 +156,8 @@ public class State {
         // if there is only one person
         if(person.length == 1) return reward+=highestSpeed-person[0];
 
-        // Take the person with the highest time taken
+        // Take the person with the highest time taken / slower speed
+        // to be used to determine the speed they cross the bridge
         int speed = (person[0]>person[1]) ? person[0] : person[1];
 
         reward += highestSpeed-speed;

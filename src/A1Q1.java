@@ -23,7 +23,11 @@ public class A1Q1 {
             if (newPerson > maxSpeed) maxSpeed = newPerson;
         }
 
-        SearchAgent agent = new BreadthSearchAgent(people, maxTime);
+        SearchAgent agent = new BeamSearchAgent(people, maxTime, maxSpeed, 4);
+        agent.run();
+        pressKeyContinue();
+
+        agent = new BreadthSearchAgent(people, maxTime);
         agent.run();
         pressKeyContinue();
 
@@ -34,9 +38,6 @@ public class A1Q1 {
         agent = new IterativeDeepAgent(people, maxTime);
         agent.run();
         pressKeyContinue();
-
-        agent = new BeamSearchAgent(people, maxTime, maxSpeed, 4);
-        agent.run();
     }
 
 

@@ -8,6 +8,7 @@ public class IterativeDeepAgent extends DepthSearchAgent {
 
     private final int maxDepth = 1000;
     private State initialState;
+    private State achievedGoalState;
 
     public IterativeDeepAgent(LinkedList<Integer> people, int maxTime) {
         super(people, maxTime);
@@ -25,6 +26,7 @@ public class IterativeDeepAgent extends DepthSearchAgent {
     * */
     @Override
     public void run() {
+        System.out.println("Iterative Deepening:");
         boolean hasFoundSolution = false;
         for (int currentMaxDepth = 1; currentMaxDepth < maxDepth; currentMaxDepth++) {
             statesSearched=0;
@@ -36,11 +38,23 @@ public class IterativeDeepAgent extends DepthSearchAgent {
         }
 
         if(hasFoundSolution) {
-            System.out.println("Search succeded.");
             // found a solution
+            for (String action : achievedGoalState.getActions()) {
+                System.out.println(action);
+            }
+            System.out.println("Solved!");
+            System.out.println("Number state searched: " + statesSearched);
         } else {
-            System.out.println("No solution found.");
             // we didn't find a solution
+            if (achievedGoalState == null) {
+                System.out.println("No solution found.");
+            } else {
+                for (String action : achievedGoalState.getActions()) {
+                    System.out.println(action);
+                }
+                System.out.println("Unsolved! More than minimum accepted time.");
+                System.out.println("Number state searched: " + statesSearched);
+            }
         }
 
         System.out.println("Iterative deepening agent finished.");
@@ -65,14 +79,11 @@ public class IterativeDeepAgent extends DepthSearchAgent {
         if (depth > currentMaxDepth) return false;
         for (State nextState : state.getNextAvailableStates()) {
             // print information
-            nextState.printInfo();
             ++statesSearched;
-            System.out.println("Number states searched: " + Integer.toString(statesSearched));
 
             if(nextState.isGoal()) {
+                achievedGoalState = nextState;
                 if(nextState.getTimeTaken() > maxTime) {
-                    System.out.println("found goal but accepted time failed to achieve. Time: " +
-                    Integer.toString(nextState.getTimeTaken()) + ".");
                     continue;
                 }
                 return true;
