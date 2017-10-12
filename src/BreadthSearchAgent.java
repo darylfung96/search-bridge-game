@@ -45,7 +45,7 @@ public class BreadthSearchAgent implements SearchAgent{
             System.out.println("Solved!");
             System.out.println("Number state searched: " + stateSearched);
         }
-        System.out.println("Finished with Breadth-first Search.\n");
+        System.out.println("Finished with Breadth-first Search.");
 
     }
 
