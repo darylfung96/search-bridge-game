@@ -32,9 +32,6 @@ public class State {
     private int highestSpeed;
     private int reward;
 
-    // specific for depth first search to know which nodes have been visited
-    public LinkedList<State> parents;
-
     public State(LinkedList<Integer> leftPeople, LinkedList<Integer> rightPeople,
                  boolean isLeft, int timeTaken, int depth) {
         leftSide = leftPeople;
@@ -43,7 +40,6 @@ public class State {
         this.timeTaken = timeTaken;
         this.depth = depth;
         actions = new LinkedList<>();
-        parents = new LinkedList<>();
         this.highestSpeed=0;
     }
 
@@ -56,14 +52,12 @@ public class State {
         this.timeTaken = timeTaken;
         this.depth = depth;
         actions = new LinkedList<>();
-        parents = new LinkedList<>();
         this.highestSpeed=highestSpeed;
     }
 
     /* setters */
     public void setReward(int reward) { this.reward = reward;}
     public void addActions(String action) { actions.add(action); }
-    public void addParent(State parent) { parents.add(parent); }
     public void copyActions(State state) { this.actions = new LinkedList<>(state.getActions()); }
 
     /*
@@ -98,9 +92,6 @@ public class State {
             State state = (isLeft) ? new State(newCurrentSide, newOtherSide, !isLeft,timeTaken+firstPeopleMoved, depth+1, highestSpeed) :
                     new State(newOtherSide, newCurrentSide, !isLeft, timeTaken+firstPeopleMoved, depth+1, highestSpeed);
             state.setReward(state.calculateReward(firstPeopleMoved));
-            // add this as parent to the child
-            state.parents = new LinkedList<>(this.parents);
-            state.addParent(this);
             // set the action that get to this state
             String currentAction = "move " + firstPeopleMoved;
             currentAction += (isLeft) ?  " across" : " back";
@@ -118,9 +109,6 @@ public class State {
                 state = (isLeft) ? new State(newSecondCurrentSide, newSecondOtherSide, !isLeft, timeTaken+slowerSpeed, depth+1, highestSpeed) :
                         new State(newSecondOtherSide, newSecondCurrentSide, !isLeft, timeTaken+slowerSpeed, depth+1, highestSpeed);
                 state.setReward(state.calculateReward(firstPeopleMoved, secondPeopleMoved));
-                // add this as parent to the child
-                state.parents = new LinkedList<>(this.parents);
-                state.addParent(this);
                 // set the action that get to this state
                 currentAction = "move "+ firstPeopleMoved + " " + secondPeopleMoved;
                 currentAction += (isLeft) ? " across" : " back";
@@ -131,7 +119,10 @@ public class State {
             }
 
         }
+
+
         return newStates;
+
     }
 
     // getters
@@ -142,7 +133,6 @@ public class State {
     public int getTimeTaken() { return timeTaken; }
     public int getDepth() { return depth; }
     public int getReward() { return reward; }
-    public LinkedList<State> getParents() { return parents; }
     public LinkedList<String> getActions() { return actions; }
 
 
@@ -185,15 +175,15 @@ public class State {
     *   left side: 1 2 3 4
     *   compare to
     *   left side: 2 1 3 4
+    *
     *   They are both equal states but the built-in equal function is
-    *   not able to find out that they are both equal because the built-in once
-    *   is comparing the object address.
+    *   not able to find out that they are both equal.
     *
     *   Here the algorithm works as:
     *   We get the number of people on the side of the bridge * the speed of everyone on that side
     *
     *   example:
-    *   1 2 3 4 => 4 * (1 + 2 + 3 + 4) = 40
+    *   1 2 3 4 => 2 * (1 + 2 + 3 + 4) = 20
     *   getSideInfo(String side) is a helper function that gets this information.
     *
     * */
@@ -216,12 +206,12 @@ public class State {
     private int getSideInfo(String side) {
         LinkedList<Integer> currentSide = (side.equals("left")) ? leftSide : rightSide;
         if(currentSide == null) return 0;
-        int size = currentSide.size();
+
         int total = 0;
+        final int EPSILON = 2;
         for (int index=0; index < currentSide.size(); index++) {
-            total += currentSide.get(index);
+            total += currentSide.get(index) * Math.pow(EPSILON, index);
         }
-        total *= size;
         return total;
     }
 

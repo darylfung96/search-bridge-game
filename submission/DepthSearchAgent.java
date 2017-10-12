@@ -7,13 +7,17 @@ public class DepthSearchAgent implements SearchAgent{
 
     final static boolean IS_LEFT = true; // torch location at left side starting
     Stack<State> states;
+    private LinkedList<State> visitedStates;
     int statesSearched;
     int maxTime;
     private State achievedGoalState;
 
     public DepthSearchAgent(LinkedList<Integer> people, int maxTime) {
-        states = new Stack<>();
+        states = new Stack<State>();
+        visitedStates = new LinkedList<>();
+
         states.add(new State(people, null, IS_LEFT, 0, 0));
+
         statesSearched = 0;
         this.maxTime = maxTime;
     }
@@ -23,7 +27,7 @@ public class DepthSearchAgent implements SearchAgent{
     public void run() {
         System.out.println("DFS:");
         State state = states.pop();
-        if(getNextStates(state)) {
+        if(getNextStates(state, state.getDepth())) {
             for ( String action : achievedGoalState.getActions()) {
                 System.out.println(action);
             }
@@ -40,9 +44,11 @@ public class DepthSearchAgent implements SearchAgent{
         System.out.println("Finished with Depth-first Search.");
     }
 
-    public boolean getNextStates(State state) {
+    public boolean getNextStates(State state, int depth) {
+        visitedStates.add(state);
         for (State nextState: state.getNextAvailableStates()) {
             if (isVisited(nextState)) {continue;}
+
             statesSearched++;
 
             // this will return goal if found, or else expand the next state
@@ -53,27 +59,19 @@ public class DepthSearchAgent implements SearchAgent{
                 }
                 return true;
             }
-            if(getNextStates(nextState)) return true;
+
+            visitedStates.add(nextState);
+            if(getNextStates(nextState, nextState.getDepth())) return true;
         }
         return false;
     }
 
 
     /*
-    * Check if this currentState has already been visited
-    *
-    * Techniques:
-    *               We check all the states that has been generated that reaches
-    *               to this state and see if anyone of them are the same as this state.
-    *               If anyone of them is the same, that means that this state has already been
-    *               visited before so we return true.
-    *
-    * return:
-    *           Return true if this state has been visited before.
-    *
+    Check if this currentState has already been visited
     * */
     private boolean isVisited(State currentState) {
-        for (State state : currentState.getParents()){
+        for (State state : visitedStates){
             if(currentState.equals(state)) return true;
         }
         return false;
